@@ -76,3 +76,9 @@ DATABASES = {
         "PASSWORD": env('POSTGRES_PASSWORD')
     }
 }
+import os
+
+if os.environ.get('DATABASE_URL', None):
+    import dj_database_url
+
+    DATABASES['default'] = dj_database_url.config()

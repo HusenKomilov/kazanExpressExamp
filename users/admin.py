@@ -3,11 +3,11 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import decorators, get_user_model
 from django.utils.translation import gettext_lazy as _
-
+from users.models import Role
 from users.forms import UserAdminChangeForm, UserAdminCreationForm
 
 User = get_user_model()
-
+admin.site.register(Role)
 if settings.DJANGO_ADMIN_FORCE_ALLAUTH:
     # Force the `admin` sign in process to go through the `django-allauth` workflow:
     # https://django-allauth.readthedocs.io/en/stable/advanced.html#admin
@@ -30,10 +30,14 @@ class UserAdmin(auth_admin.UserAdmin):
                     "is_superuser",
                     "groups",
                     "user_permissions",
+                    'role',
                 ),
             },
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
-    list_display = ["username", "name", "is_superuser"]
+    list_display = ["username", "name", "is_superuser", "get_role"]
     search_fields = ["name"]
+
+    def get_role(self, obj):
+        return [a.title for a in obj.role.all()]
