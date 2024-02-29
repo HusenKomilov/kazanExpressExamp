@@ -4,6 +4,26 @@ from django.utils.safestring import mark_safe
 from examp import models
 
 
+@admin.register(models.Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'title', 'description')
+    list_display_links = ('title',)
+    search_fields = ('title',)
+
+    #
+    def has_add_permission(self, request) -> bool:
+        if request.user.role.filter(title="Category Admin"):
+            return True
+
+    def has_view_permission(self, request, obj=None) -> bool:
+        if request.user.role.filter(title="Category Admin"):
+            return True
+
+    def has_change_permission(self, request, obj=None) -> bool:
+        if request.user.role.filter(title="Category Admin"):
+            return True
+
+
 class GalleryInline(admin.TabularInline):
     fk_name = 'product'
     model = models.Gallery
@@ -13,6 +33,10 @@ class GalleryInline(admin.TabularInline):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'get_photo')
+    list_filter = ('shop',)
+    search_fields = ('title',)
+    list_select_related = ("category", "shop")
+    autocomplete_fields = ("category",)
     inlines = [GalleryInline]
 
     def get_photo(self, obj):
@@ -26,11 +50,36 @@ class ProductAdmin(admin.ModelAdmin):
 
     get_photo.short_description = "Mahsulot rasmi"
 
+    # def get_queryset(self, request):
+    #     return super().get_queryset(request).select_related("category", "shop",)
 
-models = apps.get_models()
+    def has_add_permission(self, request) -> bool:
+        if request.user.role.filter(title="Product Admin"):
+            return True
 
-for model in models:
-    try:
-        admin.site.register(model)
-    except admin.sites.AlreadyRegistered:
-        pass
+    def has_view_permission(self, request, obj=None) -> bool:
+        if request.user.role.filter(title="Product Admin"):
+            return True
+
+    def has_change_permission(self, request, obj=None) -> bool:
+        if request.user.role.filter(title="Product Admin"):
+            return True
+
+
+@admin.register(models.Shop)
+class ShopAdmin(admin.ModelAdmin):
+    list_display = ("title", "description")
+    list_display_links = ("title",)
+    search_fields = ('title',)
+
+    def has_add_permission(self, request) -> bool:
+        if request.user.role.filter(title="Shop Admin"):
+            return True
+
+    def has_change_permission(self, request, obj=None) -> bool:
+        if request.user.role.filter(title="Shop Admin"):
+            return True
+
+    def has_view_permission(self, request, obj=None) -> bool:
+        if request.user.role.filter(title="Shop Admin"):
+            return True

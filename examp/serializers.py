@@ -17,12 +17,13 @@ class CategorySerializer(serializers.ModelSerializer):
 class GallerySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Gallery
-        fields = ('product', 'image')
+        fields = ("product", 'image')
 
 
 class ProductListAPIView(serializers.ModelSerializer):
     category = serializers.StringRelatedField(read_only=True)
     shop = serializers.StringRelatedField(read_only=True)
+
     # image = serializers.ListSerializer(child=GallerySerializer(), source='image')
 
     class Meta:
@@ -39,19 +40,8 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validate_data):
         gallery_detail = validate_data.pop('image', None)
-        product = models.Product.objects.create(**gallery_detail)
+        product = models.Product.objects.create(**validate_data)
 
         for item in gallery_detail:
-            item['product'] = product
-            GallerySerializer.create(ProductCreateSerializer(), **item)
-        return product
-
-    # def update(self, instance, validate_data):
-    #     product_image = validate_data.pop('product_image')
-    #     instance.title = validate_data.get('title', instance.title)
-    #     instance.description = validate_data.get('description', instance.title)
-    #     instance.price = validate_data.get('price', instance.title)
-    #     instance.amount = validate_data.get('amount', instance.title)
-    #     instance.category = validate_data.get('category', instance.title)
-    #     instance.shop = validate_data.get('shop', instance.title)
-    #     instance.save()
+            post = models.Gallery.objects.create(product=product, image=item, **validate_data)
+        return post

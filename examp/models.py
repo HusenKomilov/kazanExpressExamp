@@ -12,8 +12,8 @@ class Category(BaseModel):
 
 class Shop(BaseModel):
     title = models.CharField(max_length=128)
-    description = models.TextField()
-    image = models.ImageField(upload_to="shop/")
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="shop/",null=True,blank=True)
 
     def __str__(self):
         return self.title
@@ -43,7 +43,10 @@ class Product(BaseModel):
         else:
             return '-'
 
+    class Meta:
+        verbose_name_plural = "Products"
+
 
 class Gallery(BaseModel):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product", editable=False)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product")
     image = models.ImageField(upload_to="product/")

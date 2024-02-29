@@ -3,12 +3,31 @@ from django.contrib.auth import get_user_model
 from users.models import User
 
 
-class IsManageAdminPermission(permissions.BasePermission):
+class IsProductAdminPermission(permissions.BasePermission):
     def has_permission(self, request, view) -> bool:
         if request.user.is_authenticated:
-            a = ["Shop Admin", "Category Admin", "Product Admin"]
             try:
-                user_roles = request.user.role.values_list('title', flat=True)
-                return any(i in user_roles for i in a)
+                if request.user.role.filter(title="Product Admin"):
+                    return True
+            except Exception as e:
+                pass
+
+
+class IsCategoryAdminPermission(permissions.BasePermission):
+    def has_permission(self, request, view) -> bool:
+        if request.user.is_authenticated:
+            try:
+                if request.user.role.filter(title="Category Admin"):
+                    return True
+            except Exception as e:
+                pass
+
+
+class IsShopAdminPermission(permissions.BasePermission):
+    def has_permission(self, request, view) -> bool:
+        if request.user.is_authenticated:
+            try:
+                if request.user.role.filter(title="Shop Admin"):
+                    return True
             except Exception as e:
                 pass
