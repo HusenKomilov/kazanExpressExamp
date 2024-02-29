@@ -32,16 +32,19 @@ class ProductListAPIView(serializers.ModelSerializer):
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    image = GallerySerializer()
+    images = GallerySerializer(many=True)
+    upload_images = serializers.ListSerializer(
+        child=serializers.ImageField(max_length=100000, allow_empty_file=False, use_url=False), write_only=True)
 
     class Meta:
         model = models.Product
-        fields = ('id', 'title', 'description', 'price', 'amount', 'is_active', 'category', 'shop', 'image')
+        fields = (
+        'id', 'title', 'description', 'price', 'amount', 'is_active', 'category', 'shop', 'images', "upload_images")
 
     def create(self, validate_data):
-        gallery_detail = validate_data.pop('image', None)
+        gallery_detail = validate_data.pop('upload_images')
         product = models.Product.objects.create(**validate_data)
 
         for item in gallery_detail:
-            post = models.Gallery.objects.create(product=product, image=item, **validate_data)
-        return post
+            gallery = models.Gallery.objects.create(product=product, image=item)
+        return product

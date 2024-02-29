@@ -36,7 +36,8 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('shop',)
     search_fields = ('title',)
     list_select_related = ("category", "shop")
-    autocomplete_fields = ("category",)
+    autocomplete_fields = ("shop",)
+    list_per_page = 100
     inlines = [GalleryInline]
 
     def get_photo(self, obj):
@@ -71,6 +72,7 @@ class ShopAdmin(admin.ModelAdmin):
     list_display = ("title", "description")
     list_display_links = ("title",)
     search_fields = ('title',)
+    list_per_page = 100
 
     def has_add_permission(self, request) -> bool:
         if request.user.role.filter(title="Shop Admin"):

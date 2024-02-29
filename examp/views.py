@@ -68,7 +68,7 @@ class ProductListAPIView(generics.ListAPIView):
 
 class ProductCreateAPIView(generics.CreateAPIView):
     queryset = models.Product.objects.all()
-    permission_classes = [permissions.IsProductAdminPermission]
+    # permission_classes = [permissions.IsProductAdminPermission]
     serializer_class = serializers.ProductCreateSerializer
 
 
