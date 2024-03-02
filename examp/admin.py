@@ -10,7 +10,6 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display_links = ('title',)
     search_fields = ('title',)
 
-    #
     def has_add_permission(self, request) -> bool:
         if request.user.role.filter(title="Category Admin"):
             return True
@@ -39,7 +38,6 @@ class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ("shop",)
     list_per_page = 100
     inlines = [GalleryInline]
-
     def get_photo(self, obj):
         if obj.product:
             try:
@@ -51,8 +49,8 @@ class ProductAdmin(admin.ModelAdmin):
 
     get_photo.short_description = "Mahsulot rasmi"
 
-    # def get_queryset(self, request):
-    #     return super().get_queryset(request).select_related("category", "shop",)
+
+
 
     def has_add_permission(self, request) -> bool:
         if request.user.role.filter(title="Product Admin"):

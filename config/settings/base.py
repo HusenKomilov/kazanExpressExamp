@@ -65,9 +65,11 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
-    "jazzmin",
+    # "jazzmin",
     "django.contrib.admin",
     "django.forms",
+    'django4_recaptcha_admin_login',
+    'captcha',
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -79,6 +81,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "dj_rest_auth",
 ]
 
 LOCAL_APPS = [
@@ -137,6 +140,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    # "examp.throttling.AuthUserThrottle",
 ]
 
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -214,10 +218,9 @@ X_FRAME_OPTIONS = "DENY"
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend",
-)
+EMAIL_BACKEND = 'django.core.email.backends.smtp.EmailBackend'
+
+SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
@@ -284,7 +287,18 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+    # 'DEFAULT_THROTTLE_CLASSES': (
+    #     'rest_framework.throttling.AnonRateThrottle',
+    #     'rest_framework.throttling.UserRateThrottle',
+    #     'examp.throttling.ProductUser'
+    # ),
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '100/day',
+    #     'user': '1000/day',
+    #     'post_user': '100/min',
+    # }
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
@@ -304,3 +318,7 @@ SPECTACULAR_SETTINGS = {
 JAZZMIN_UI_TWEAKS = {
     "theme": "darkly",
 }
+# RECAPTCHA_PUBLIC_KEY  = '6LeY9oUpAAAAABpRwQqvZByEKB5U2-Zyw2pDAIla'
+# RECAPTCHA_PRIVATE_KEY = '6LeY9oUpAAAAAJFF92iM3fpFeXbk6ixfdUZ_r9y_'
+
+# RECAPTCHA_DOMAIN = 'www.google.com'

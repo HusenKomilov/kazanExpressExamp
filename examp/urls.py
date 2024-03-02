@@ -15,3 +15,4 @@ urlpatterns = [
     path('product/<int:pk>/update/', views.ProductRetrieveUpdateAPIView.as_view()),
     path('product/<int:pk>/delete/', views.ProductDeleteAPIView.as_view()),
 ]
+

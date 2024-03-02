@@ -48,5 +48,5 @@ class Product(BaseModel):
 
 
 class Gallery(BaseModel):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product")
     image = models.ImageField(upload_to="product/")

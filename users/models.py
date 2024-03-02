@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from utils.models import BaseModel
+from users.managers import UserManger
 
 
 class Role(BaseModel):
@@ -14,24 +15,26 @@ class Role(BaseModel):
 
 
 class User(AbstractUser):
-    # class Role(models.TextChoices):
-    #     SHOP_ADMIN = "shop"
-    """
-    Default custom user model for My Awesome Project.
-    If adding fields that need to be filled at user signup,
-    check forms.SignupForm and forms.SocialSignupForms accordingly.
-    """
+    email = models.EmailField(max_length=256, unique=True)
+    first_name = models.CharField(max_length=256)  # type: ignore
+    last_name = models.CharField(max_length=256)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    last_joined = models.DateTimeField(auto_now=True)
 
-    # First and last name do not cover name patterns around the globe
-    name = CharField(_("Name of User"), blank=True, max_length=255)
-    first_name = None  # type: ignore
-    last_name = None  # type: ignore
-    # # role = models.CharField(max_length=128, choices=choices.Role.choices)
     role = models.ManyToManyField(Role, related_name='role')
+    image = models.ImageField(upload_to="user/")
 
-    # is_product_admin = models.BooleanField(default=False)
-    # is_shop_admin = models.BooleanField(default=False)
-    # is_categorry_ad
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+    objects = UserManger()
+
+    def tokens(self):
+        pass
+
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.
 
@@ -40,3 +43,12 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"username": self.username})
+
+
+class OneTimePassword(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6, unique=True)
+
+    def __str__(self):
+        return self.user.email
+

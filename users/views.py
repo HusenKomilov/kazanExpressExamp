@@ -1,11 +1,23 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView
+from rest_framework import generics
+from rest_framework import views, status, response
+
+from users import serializers
 
 User = get_user_model()
+
+
+class UserLoginView(views.APIView):
+    serializer_class = serializers.LoginSerializer
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        return response.Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
